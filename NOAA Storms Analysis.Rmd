@@ -61,7 +61,7 @@ event_types <- event_types[order(-event_types$Freq), ]
 head(event_types, 15)
 rm(event_types)
 ```
-
+  
 This tells us that there are many event type names that overlap in commonly understood categories. Some of these categories include:  
 - Cold Weather;  
 - Tornados;  
@@ -69,9 +69,9 @@ This tells us that there are many event type names that overlap in commonly unde
 - Tropical Storms including typhoons, hurricanes, and tropical depressions;  
 - Wind; and,  
 - Flood  
-
-So, with that in mind, we go about combining the event types using R's grepl. Note, in cases of event type categories that include "/", "&", or "and", those event types are collapsed into a single value named "Multiple Event". This "Multiple Event" category is included in the analysis for completeness but it should be understood that it overlaps most of the other singular event types.
-
+  
+So, with that in mind, we go about combining the event types using R's grepl. __Note__: in cases of event type categories that include "/", "&", or "and", those event types are collapsed into a single value named "Multiple Event". This "Multiple Event" category is included in the analysis for completeness but it should be understood that it overlaps most of the other singular event types.
+  
 ```{r Data Cleaning 1}
 StormData$EVTYPE <- as.character(StormData$EVTYPE)
 StormData$EVTYPE[grepl("/|&|and", StormData$EVTYPE,ignore.case = TRUE)] <- "Multiple Event"
@@ -103,14 +103,14 @@ StormData$EVTYPE[grepl("*Current|*SURF|*SEAS|marine*|*swells|*waves|waterspout|*
 StormData$EVTYPE[grepl("heat", StormData$EVTYPE,ignore.case = TRUE)] <- "Heat"
 StormData$EVTYPE[grepl("Storm SURGE", StormData$EVTYPE,ignore.case = TRUE)] <- "Storm Surge"
 ```
-
-Now we can take a look at the Property Damage and Crop Damage Exponents to get a sense of they are used in the data set. We start by examining and then transforming the Property Damage Exponents variable.
-
+  
+Now we can take a look at the Property Damage and Crop Damage Exponents to get a sense of they are used in the data set. We start by examining and then transforming the Property Damage Exponents variable.  
+  
 ``` {r Data Cleaning 2}
 ## Clean the Property and Crop Damage Data
 unique(StormData$PROPDMGEXP)
 
-## Convert exponents into numeric values
+## Transform the property damage exponents into numeric values
 StormData$PROPDMG[StormData$PROPDMGEXP == "K"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "K"] * 1000
 StormData$PROPDMG[StormData$PROPDMGEXP == "M"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "M"] * (10^6)
 StormData$PROPDMG[StormData$PROPDMGEXP == "H"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "H"] * 100
@@ -132,10 +132,11 @@ StormData$PROPDMG[StormData$PROPDMGEXP == "-"] <- 0
 StormData$PROPDMG[StormData$PROPDMGEXP == "?"] <- 0
 head(StormData[,c("EVTYPE","PROPDMG","PROPDMGEXP")])
 ```
-
-As you can see, NOAA's meterologists used a variety of means to indicate exponents including "K" and "3" for thousands, and "B" and "8" for billions. We can now perform the same tranformation for the Crop Damage Exponent.
-
+  
+As you can see, NOAA's meterologists used a variety of means to indicate exponents including "K" and "3" for thousands, and "B" and "8" for billions. We can now perform the same tranformation for the Crop Damage Exponent.  
+  
 ``` {r Data Cleaning 3}
+## Crop Damage transformation
 StormData$CROPDMG[StormData$CROPDMGEXP == "M"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "M"] * (10^6)
 StormData$CROPDMG[StormData$CROPDMGEXP == "K"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "K"] * 1000
 StormData$CROPDMG[StormData$CROPDMGEXP == "m"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "m"] * (10^6)
@@ -150,7 +151,46 @@ head(StormData[,c("EVTYPE","CROPDMG","CROPDMGEXP")])
 
 We're now in a position to take a look at the data and answer two questions:  
 1 - Across the US, which event typs (EVTYPE variable) are most harmful to population health?  
-2 - Across the US, which event types have the greatest economic conseqences?
+2 - Across the US, which event types have the greatest economic conseqences?  
 
-## Section Three: Data Analysis and Results
+## Section Three: Data Analysis and Results  
+  
+### Public Health Consequences  
 
+Let's address the population health consequences first. Usually, when we think of public health we include chronic and acute disease, injury, and fatalities. Unfortunately, NOAA's data set does not include the disease consequences of crop damage, dust, flooding, etc. Instead, the public health consequences of meteorological events are reduced only to injuries and fatalities.  
+  
+So, we aggregate the top 10 meteorological causes of both.
+
+```{r Analysis 1}
+## Fatalities aggregation
+fatal <- aggregate(FATALITIES~EVTYPE,data=StormData,FUN=sum,na.rm=TRUE)
+fatal <- fatal[with(fatal,order(-FATALITIES)),]
+fatal <- head(fatal, 10)
+print(fatal)
+
+## Injuries aggregation
+injury <- aggregate(INJURIES~EVTYPE,data=StormData,FUN=sum,na.rm=TRUE)
+injury <- injury[with(injury,order(-INJURIES)),]
+injury <- head(injury,10)
+print(injury)
+```
+
+As you can see, Tornados is the event type that causes the most fatalities and injuries across the whole of the US. Now, let's take a look at this graphically.  
+
+``` {r Analysis 2}
+##plot the graph showing the top 10 fatalities and injuries
+par(mfrow=c(1,2),mar=c(8,5,4,2))
+barplot(fatal$FATALITIES/(10^3),names.arg=fatal$EVTYPE,las=2,col="black",ylab="Fatalities (Thousands)",main="Top 10 Causes of Fatalities")
+barplot(injury$INJURIES/(10^3),names.arg=injury$EVTYPE,las=2,col="red",ylab="Injuries (Thousands)",main="Top 10 Causes of Injuries")
+```
+
+Again, Tornados are far and away the most important cause of fatalities and injuries in the US. This makes some sense as, according to NOAA, more than 1,200 tornadoes strike the US every year. See [here.](http://www.nssl.noaa.gov/education/svrwx101/tornadoes/)  
+
+### Economic Consequences
+Now we can take a look at the economic consequences of the meteorological events in the NOAA data set. These consequences include property damage and crop damage. Why, you might ask, are these separated? I don't know. My guess is because the data for these are tracked by separate agencies of the US government (for crop data, it's probably the [USDA](https://usdasearch.usda.gov/search?utf8=%E2%9C%93&affiliate=usda&query=crop+damage+due+to+weather)).  
+  
+Regardless, let's perform the same aggregation as before on property and crop damage and see what happens.  
+  
+```[r Analysis 3]
+
+```
