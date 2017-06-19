@@ -123,10 +123,17 @@ $(document).ready(function () {
 </div>
 
 
+<div id="population-health-and-economic-consequences-of-various-meteorological-events" class="section level1">
+<h1>Population Health and Economic Consequences of Various Meteorological Events</h1>
 <div id="analysis-generated-for-coursera-course-reproducible-research" class="section level2">
 <h2>Analysis Generated for Coursera Course: Reproducible Research</h2>
-<div id="section-one-setup-and-data-import" class="section level3">
-<h3>Section One: Setup and Data Import</h3>
+<div id="synopsis" class="section level3">
+<h3>Synopsis</h3>
+<p>For this project, I analyzed the NOAA Storms database for the Cousera Reproducible Research class. Taking the raw data, I cleaned up the event types to ensure that categories were being properly compared. Then I examined the meteorological event types across the entire data set. I found that, for population health, tornadoes have the greatest consequences while, for economics concerns, floods have the greatest consequences. As a major caveat, drought cause a greater amount of damage to crops but I have concerns, detailed below, about how these are being counted.</p>
+<p>The following analysis was performed RStudio (1.0.136) and R (3.3.2).</p>
+</div>
+<div id="data-processing" class="section level3">
+<h3>Data Processing</h3>
 <p>We begin the analysis by downloading and importing the Storms Data.</p>
 <pre class="r"><code>dataURL &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2&quot;
 documentationURL &lt;- &quot;https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf&quot;
@@ -153,9 +160,6 @@ if (!file.exists(filename)) {
 if (!exists(DataName)) {
     StormData &lt;- read.csv(filename, header = TRUE)
 }</code></pre>
-</div>
-<div id="section-two-data-review-and-cleaning" class="section level3">
-<h3>Section Two: Data Review and Cleaning</h3>
 <p>After importing the data, we take a look at it to get a sense of how it needs to be cleaned in order to do a reasonable analysis. First, we look at the column names and top of the data set.</p>
 <pre class="r"><code>names(StormData)</code></pre>
 <pre><code>##  [1] &quot;STATE__&quot;    &quot;BGN_DATE&quot;   &quot;BGN_TIME&quot;   &quot;TIME_ZONE&quot;  &quot;COUNTY&quot;    
@@ -448,6 +452,7 @@ barplot(crop$CROPDMG/(10^9), names.arg = crop$EVTYPE, las = 2, col = &quot;yello
 3 Finally, Drought also quite terrible for crops but may be less important than appears because of a time-scale issue.</p>
 <p>The caveat is this: The time-scale issue may not actually be an issue since we have measured the consequences of these events across a comparable time period. However, my sense is that due to the slow moving nature of draught it is easier to measure the damage done to crops from a baseline year-over-year average.</p>
 <p>Questions, Comments, Elucidations of measuring crop damage due to fire or flood? Email me <a href="mailto:alimehouse@gmail.com">here</a> or check out the git hub page where you can find the R code and Rmd files I used to generate the analysis <a href="https://github.com/acblimehouse/RR-WK4-CP-2">here</a>.</p>
+</div>
 </div>
 
 
