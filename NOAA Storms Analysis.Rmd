@@ -10,13 +10,14 @@ output: html_document
   
 ```{r setup, include=FALSE, root.dir = "/Users/adamlimehouse/Desktop/Dropbox/03 Projects Folder/Economic and Policy Analysis/Intro to Data Science R Files/Reproducible Research - Peer Graded Assessments/RR-WK4-CP-2"}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(tidy = TRUE)
 MyWD <- "/Users/adamlimehouse/Desktop/Dropbox/03 Projects Folder/Economic and Policy Analysis/Intro to Data Science R Files/Reproducible Research - Peer Graded Assessments/RR-WK4-CP-2"
 setwd(MyWD)
 ```
   
 We begin the analysis by downloading and importing the Storms Data.  
   
-```{r initial import}
+```{r initial import, results="hide", message=FALSE, warning=FALSE}
 dataURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
 documentationURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf"
 documfile <- "StormDataDocumentation.PDF"
@@ -171,8 +172,8 @@ head(StormData[,c("EVTYPE","CROPDMG","CROPDMGEXP")])
 ```
   
 We're now in a position to take a look at the data and answer two questions:  
-1 - Across the US, which event typs (EVTYPE variable) are most harmful to population health?  
-2 - Across the US, which event types have the greatest economic conseqences?  
+1. __Across the US, which event typs (EVTYPE variable) are most harmful to population health?__  
+2. __Across the US, which event types have the greatest economic conseqences?__  
   
 ## Section Three: Data Analysis and Results  
     
@@ -196,7 +197,7 @@ injury <- head(injury,10)
 print(injury)
 ```
   
-As you can see, Tornados is the event type that causes the most fatalities and injuries across the whole of the US. Now, let's take a look at this graphically.  
+As you can see, Tornados are the event type that causes the most fatalities and injuries across the whole of the US. Now, let's take a look at this graphically.  
 
 ``` {r Analysis 2}
 ##plot the graph showing the top 10 fatalities and injuries
@@ -208,7 +209,7 @@ barplot(injury$INJURIES/(10^3),names.arg=injury$EVTYPE,las=2,col="red",ylab="Inj
 Again, Tornados are far and away the most important cause of fatalities and injuries in the US. This makes some sense as, according to NOAA, more than 1,200 tornadoes strike the US every year. See [here.](http://www.nssl.noaa.gov/education/svrwx101/tornadoes/)  
 
 ### Economic Consequences
-Now we can take a look at the economic consequences of the meteorological events in the NOAA data set. These consequences include property damage and crop damage. Why, you might ask, are these separated? I don't know. My guess is because the data for these are tracked by separate agencies of the US government (for crop data, it's probably the [USDA](https://usdasearch.usda.gov/search?utf8=%E2%9C%93&affiliate=usda&query=crop+damage+due+to+weather)).  
+Now we can take a look at the economic consequences of the meteorological events in the NOAA data set. These consequences include property damage and crop damage. Why, you might ask, are these separated? I don't know. My guess is that the data for these are tracked by separate agencies of the US government (for crop data, it's probably the [USDA](https://usdasearch.usda.gov/search?utf8=%E2%9C%93&affiliate=usda&query=crop+damage+due+to+weather)).  
   
 Regardless, let's perform the same aggregation as before on property and crop damage and see what happens.  
   
@@ -233,8 +234,8 @@ To wrap up, let's show this graphically:
 par(mfrow=c(1,2),mar=c(8,5,4,2))
 
 ##plot the graph showing the top 10 property and crop damages
-barplot(prop$PROPDMG/(10^9),names.arg=prop$EVTYPE,las=2,col="green",ylab="Prop.damage(billions)",main="Top 10 Causes of Prop. Damage")
-barplot(crop$CROPDMG/(10^9),names.arg=crop$EVTYPE,las=2,col="yellow",ylab="Crop damage(billions)",main="Top 10 Causes of Crop Damage")
+barplot(prop$PROPDMG/(10^9),names.arg=prop$EVTYPE,las=2,col="green",ylab="Prop.damage (Billions)",main="Top 10 Causes of Prop. Damage")
+barplot(crop$CROPDMG/(10^9),names.arg=crop$EVTYPE,las=2,col="yellow",ylab="Crop damage (Billions)",main="Top 10 Causes of Crop Damage")
 ```
 
 _There you have it._ 
@@ -247,4 +248,4 @@ To sum up this analysis, here are three conclusions and a caveat:
   
 The caveat is this: The time-scale issue may not actually be an issue since we have measured the consequences of these events across a comparable time period. However, my sense is that due to the slow moving nature of draught it is easier to measure the damage done to crops from a baseline year-over-year average.  
   
-Questions, Comments, Elucidations of measuring crop damage due to fire or flood? Email me [here](mailto:alimehouse@gmail.com).
+Questions, Comments, Elucidations of measuring crop damage due to fire or flood? Email me [here](mailto:alimehouse@gmail.com) or check out the git hub page where you can find the R code and Rmd files I used to generate the analysis [here](https://github.com/acblimehouse/RR-WK4-CP-2).
