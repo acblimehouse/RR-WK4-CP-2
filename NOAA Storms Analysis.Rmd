@@ -1,0 +1,48 @@
+---
+title: "NOAA Storms Analysis"
+author: "ACBLimehouse"
+date: "6/18/2017"
+output: html_document
+---
+# NOAA Storms Analysis
+## Analysis Generated for Coursera Course: Reproducible Research
+
+### Section One: Setup and Data Import
+
+```{r setup, include=FALSE, root.dir = "/Users/adamlimehouse/Desktop/Dropbox/03 Projects Folder/Economic and Policy Analysis/Intro to Data Science R Files/Reproducible Research - Peer Graded Assessments/RR-WK4-CP-2"}
+knitr::opts_chunk$set(echo = TRUE)
+MyWD <- "/Users/adamlimehouse/Desktop/Dropbox/03 Projects Folder/Economic and Policy Analysis/Intro to Data Science R Files/Reproducible Research - Peer Graded Assessments/RR-WK4-CP-2"
+setwd(MyWD)
+```
+
+We begin the analysis by downloading and importing the Storms Data.
+
+```{r initial import}
+dataURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
+documentationURL <- "https://d396qusza40orc.cloudfront.net/repdata%2Fpeer2_doc%2Fpd01016005curr.pdf"
+documfile <- "StormDataDocumentation.PDF"
+compfilename <- "StormData.csv.bz2"
+filename <- "StormData.csv"
+DataName <- "StormData"
+
+library(R.utils)
+library(dplyr)
+
+## Download the Documentation for reference
+if (!file.exists(documfile)){
+  download.file(documentationURL, documfile)
+}
+
+## Download the Data and Read it into the Global Environment
+if (!file.exists(filename)){
+  if (!file.exists(compfilename)){
+    download.file(dataURL, compfilename, method="curl")
+  }
+  bunzip2(compfilename, filename, remove = FALSE, skip = TRUE)
+}
+if (!exists(DataName)){
+  StormData <- read.csv(filename, header = TRUE)
+}
+```
+
+
