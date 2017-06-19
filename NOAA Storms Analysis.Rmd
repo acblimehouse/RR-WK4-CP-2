@@ -45,4 +45,64 @@ if (!exists(DataName)){
 }
 ```
 
+### Section Two: Data Review and Cleaning
+
+After importing the data, we take a look at it to get a sense of how it needs to be cleaned in order to do a reasonable analysis. First, we look at the column names and top of the data set.
+
+```{r Data Review 1}
+names(StormData)
+head(StormData)
+```
+
+Then, we take a look at the top 15 most frequent event types in NOAA's Storm Data.
+
+``` {r Data Review 2}
+event_types <- as.data.frame(table(StormData$EVTYPE))
+event_types <- event_types[order(-event_types$Freq), ]
+head(event_types, 15)
+rm(event_types)
+```
+
+This tells us that there are many event type names that overlap in commonly understood categories. Some of these categories include:  
+- Cold Weather;  
+- Tornados;  
+- Nautical events including high seas, heavy waves, etc;  
+- Tropical Storms including typhoons, hurricanes, and tropical depressions;  
+- Wind; and,  
+- Flood  
+
+So, with that in mind, we go about combining the event types using R's grepl. Note, in cases of event type categories that include "/", "&", or "and", those event types are collapsed into a single value named "Multiple Event". This "Multiple Event" category is included in the analysis for completeness but it should be understood that it overlaps most of the other singular event types.
+
+```{r Data Cleaning 1}
+StormData$EVTYPE <- as.character(StormData$EVTYPE)
+StormData$EVTYPE[grepl("/|&|and", StormData$EVTYPE,ignore.case = TRUE)] <- "Multiple Event"
+StormData$EVTYPE[grepl("volc", StormData$EVTYPE,ignore.case = TRUE)] <- "Volcano"
+StormData$EVTYPE[grepl("DROUGHT", StormData$EVTYPE,ignore.case = TRUE)] <- "Drought"
+StormData$EVTYPE[grepl("tsunami", StormData$EVTYPE,ignore.case = TRUE)] <- "Tsnumai"
+StormData$EVTYPE[grepl("LIGHTNING", StormData$EVTYPE,ignore.case = TRUE)] <- "Lightning"
+StormData$EVTYPE[grepl("Avalanc*", StormData$EVTYPE,ignore.case = TRUE)] <- "Avalanche"
+StormData$EVTYPE[grepl("*Fog", StormData$EVTYPE,ignore.case = TRUE)] <- "Fog"
+StormData$EVTYPE[grepl("wind|wnd", StormData$EVTYPE,ignore.case = TRUE)] <- "Wind"
+StormData$EVTYPE[grepl("funnel|tornado", StormData$EVTYPE,ignore.case = TRUE)] <- "Tornado"
+StormData$EVTYPE[grepl("glaze", StormData$EVTYPE,ignore.case = TRUE)] <- "Glaze"
+StormData$EVTYPE[grepl("hail", StormData$EVTYPE,ignore.case = TRUE)] <- "Hail"
+StormData$EVTYPE[grepl("dust", StormData$EVTYPE,ignore.case = TRUE)]  <- "Dust"
+StormData$EVTYPE[grepl("flood|*rising*|high water", StormData$EVTYPE,ignore.case = TRUE)] <- "Flood"
+StormData$EVTYPE[grepl("ic(e|y)", StormData$EVTYPE,ignore.case = TRUE)] <- "Ice"
+StormData$EVTYPE[grepl("fire|smoke", StormData$EVTYPE,ignore.case = TRUE)] <- "Fire"
+StormData$EVTYPE[grepl("thunder", StormData$EVTYPE,ignore.case = TRUE)] <- "Non-Tropical Storm"
+StormData$EVTYPE[grepl("Coastal*|Non-Tropical*|microburst", StormData$EVTYPE,
+                       ignore.case = TRUE)] <- "Non-Tropical Storm"
+StormData$EVTYPE[grepl("slide|eros", StormData$EVTYPE,ignore.case = TRUE)] <- "Erosion"
+StormData$EVTYPE[grepl("rain", StormData$EVTYPE,ignore.case = TRUE)] <- "Rain"
+StormData$EVTYPE[grepl("freez|cold|snow|chill|winter|blizzard|sleet|glaze|frost|hypothermia|wintry*|low temp*|mixed precip|ice", 
+                      StormData$EVTYPE,ignore.case = TRUE)] <- "Cold Weather"
+StormData$EVTYPE[grepl("TROPICAL.Storm|typhoon|*depression", StormData$EVTYPE,ignore.case = TRUE)] <- "Tropical Storm"
+StormData$EVTYPE[grepl("(hurri|opal)", StormData$EVTYPE,ignore.case = TRUE)] <- "Tropical Storm"
+StormData$EVTYPE[grepl("RIP CURREN(T|TS)", StormData$EVTYPE,ignore.case = TRUE)] <- "Rip Current"
+StormData$EVTYPE[grepl("*Current|*SURF|*SEAS|marine*|*swells|*waves|waterspout|*tide", StormData$EVTYPE,ignore.case = TRUE)] <- "Nautical"
+StormData$EVTYPE[grepl("heat", StormData$EVTYPE,ignore.case = TRUE)] <- "Heat"
+StormData$EVTYPE[grepl("Storm SURGE", StormData$EVTYPE,ignore.case = TRUE)] <- "Storm Surge"
+```
+
 
