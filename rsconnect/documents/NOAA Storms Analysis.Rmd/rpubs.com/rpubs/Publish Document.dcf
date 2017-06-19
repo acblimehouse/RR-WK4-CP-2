@@ -1,0 +1,8 @@
+name: Publish Document
+title:
+account: rpubs
+server: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/285875/29e46de6bc6e4fb6b81289388560e6c9
+bundleId: https://api.rpubs.com/api/v1/document/285875/29e46de6bc6e4fb6b81289388560e6c9
+url: http://rpubs.com/acblimehouse/285875
+when: 1497840430.92143
