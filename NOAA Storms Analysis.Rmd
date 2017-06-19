@@ -4,7 +4,6 @@ author: "ACBLimehouse"
 date: "6/18/2017"
 output: html_document
 ---
-# NOAA Storms Analysis
 ## Analysis Generated for Coursera Course: Reproducible Research
 
 ### Section One: Setup and Data Import
@@ -105,4 +104,53 @@ StormData$EVTYPE[grepl("heat", StormData$EVTYPE,ignore.case = TRUE)] <- "Heat"
 StormData$EVTYPE[grepl("Storm SURGE", StormData$EVTYPE,ignore.case = TRUE)] <- "Storm Surge"
 ```
 
+Now we can take a look at the Property Damage and Crop Damage Exponents to get a sense of they are used in the data set. We start by examining and then transforming the Property Damage Exponents variable.
+
+``` {r Data Cleaning 2}
+## Clean the Property and Crop Damage Data
+unique(StormData$PROPDMGEXP)
+
+## Convert exponents into numeric values
+StormData$PROPDMG[StormData$PROPDMGEXP == "K"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "K"] * 1000
+StormData$PROPDMG[StormData$PROPDMGEXP == "M"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "M"] * (10^6)
+StormData$PROPDMG[StormData$PROPDMGEXP == "H"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "H"] * 100
+StormData$PROPDMG[StormData$PROPDMGEXP == "h"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "h"] * 100
+StormData$PROPDMG[StormData$PROPDMGEXP == ""] <- StormData$PROPDMG[StormData$PROPDMGEXP == ""] * 1
+StormData$PROPDMG[StormData$PROPDMGEXP == "B"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "B"] * (10^9)
+StormData$PROPDMG[StormData$PROPDMGEXP == "m"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "m"] * (10^6)
+StormData$PROPDMG[StormData$PROPDMGEXP == "0"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "0"] * 1
+StormData$PROPDMG[StormData$PROPDMGEXP == "1"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "1"] * 10
+StormData$PROPDMG[StormData$PROPDMGEXP == "2"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "2"] * 100
+StormData$PROPDMG[StormData$PROPDMGEXP == "3"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "3"] * 1000
+StormData$PROPDMG[StormData$PROPDMGEXP == "4"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "4"] * (10^4)
+StormData$PROPDMG[StormData$PROPDMGEXP == "5"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "5"] * (10^5)
+StormData$PROPDMG[StormData$PROPDMGEXP == "6"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "6"] * (10^6)
+StormData$PROPDMG[StormData$PROPDMGEXP == "7"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "7"] * (10^7)
+StormData$PROPDMG[StormData$PROPDMGEXP == "8"] <- StormData$PROPDMG[StormData$PROPDMGEXP == "8"] * (10^8)
+StormData$PROPDMG[StormData$PROPDMGEXP == "+"] <- 0
+StormData$PROPDMG[StormData$PROPDMGEXP == "-"] <- 0
+StormData$PROPDMG[StormData$PROPDMGEXP == "?"] <- 0
+head(StormData[,c("EVTYPE","PROPDMG","PROPDMGEXP")])
+```
+
+As you can see, NOAA's meterologists used a variety of means to indicate exponents including "K" and "3" for thousands, and "B" and "8" for billions. We can now perform the same tranformation for the Crop Damage Exponent.
+
+``` {r Data Cleaning 3}
+StormData$CROPDMG[StormData$CROPDMGEXP == "M"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "M"] * (10^6)
+StormData$CROPDMG[StormData$CROPDMGEXP == "K"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "K"] * 1000
+StormData$CROPDMG[StormData$CROPDMGEXP == "m"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "m"] * (10^6)
+StormData$CROPDMG[StormData$CROPDMGEXP == "B"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "B"] * (10^9)
+StormData$CROPDMG[StormData$CROPDMGEXP == "k"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "k"] * 1000
+StormData$CROPDMG[StormData$CROPDMGEXP == "0"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "0"] * 1
+StormData$CROPDMG[StormData$CROPDMGEXP == "2"] <- StormData$CROPDMG[StormData$CROPDMGEXP == "2"] * 100
+StormData$CROPDMG[StormData$CROPDMGEXP == ""] <- StormData$CROPDMG[StormData$CROPDMGEXP == ""] * 1
+StormData$CROPDMG[StormData$CROPDMGEXP == "?"] <- 0
+head(StormData[,c("EVTYPE","CROPDMG","CROPDMGEXP")])
+```
+
+We're now in a position to take a look at the data and answer two questions:  
+1 - Across the US, which event typs (EVTYPE variable) are most harmful to population health?  
+2 - Across the US, which event types have the greatest economic conseqences?
+
+## Section Three: Data Analysis and Results
 
